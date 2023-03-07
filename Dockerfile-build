@@ -1,0 +1,23 @@
+FROM node:18-slim AS builder
+WORKDIR /usr/src/app
+ENV NODE_ENV=development
+
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
+
+COPY . .
+RUN yarn build
+
+FROM node:18-slim AS runner
+ENV NODE_ENV=production
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY yarn.lock ./
+COPY --from=builder /usr/src/app/next.config.js ./
+COPY --from=builder /usr/src/app/.next ./.next
+COPY --from=builder /usr/src/app/public ./public
+
+RUN yarn install
+CMD ["yarn", "start"]

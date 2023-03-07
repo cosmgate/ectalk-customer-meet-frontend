@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: front
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - 3000:3000
+    command: bash -c "yarn run dev"
